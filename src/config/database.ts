@@ -19,11 +19,12 @@ const connectDB = async (): Promise<void> => {
     
     console.log(`[DB] MongoDB conectado: ${conn.connection.host}`);
   } catch (error) {
-    console.error('❌ Error conectando a MongoDB:', error);
-    console.log('💡 Asegúrate de que MongoDB esté corriendo en tu sistema');
-    console.log('💡 Puedes iniciar MongoDB con: mongod');
+    console.error(' Error conectando a MongoDB:', error);
+    console.log(' Asegúrate de que MongoDB esté corriendo en tu sistema');
+    console.log(' Puedes iniciar MongoDB con: mongod');
     process.exit(1);
   }
 };
+
 
 export default connectDB;
