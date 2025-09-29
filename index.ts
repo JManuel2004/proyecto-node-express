@@ -39,14 +39,23 @@ app.use(express.urlencoded({ extended: true, limit: '10mb' }));
 app.get('/', (req, res) => {
   res.json({
     success: true,
-    message: 'API Backend - Sistema de Usuarios',
+    message: 'API Backend - Sistema de Gestión de Proyectos y Tareas',
     version: '1.0.0',
     endpoints: {
-      auth: '/api/users/login',
-      register: '/api/users/register',
-      profile: '/api/users/profile',
-      users: '/api/users'
-    }
+      auth: {
+        login: '/api/users/login',
+        register: '/api/users/register',
+        profile: '/api/users/profile'
+      },
+      users: '/api/users',
+      projects: {
+        base: '/api/projects',
+        myProjects: '/api/projects/my-projects',
+        stats: '/api/projects/stats'
+      },
+      tasks: '/api/tasks'
+    },
+    authentication: 'Usa Bearer Token JWT para endpoints protegidos'
   });
 });
 
@@ -81,7 +90,7 @@ const startServer = async (): Promise<void> => {
     });
     
   } catch (error) {
-    console.error('❌ Error iniciando el servidor:', error);
+    console.error('Error iniciando el servidor:', error);
     process.exit(1);
   }
 };
