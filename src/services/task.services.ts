@@ -129,4 +129,31 @@ export class TaskService {
     const filter = { project: projectId };
     return this.getTasks(filter, page, limit);
   }
+
+  
+  static async getUserTasks(userId: string, userRole: string, filter: any = {}, page: number, limit: number) {
+  
+    if (userRole !== 'superadmin') {
+      const userProjects = await Project.find({ owner: userId }).select('_id');
+      const userProjectIds = userProjects.map(project => project._id);
+      
+      filter.$or = [
+        { assignedTo: userId },
+        { project: { $in: userProjectIds } }
+      ];
+
+      if (filter.project && !userProjectIds.includes(filter.project)) {
+        const assignedTasksCount = await Task.countDocuments({ 
+          project: filter.project, 
+          assignedTo: userId 
+        });
+        
+        if (assignedTasksCount === 0) {
+          throw new ForbiddenError('No tienes permisos para ver tareas de este proyecto');
+        }
+      }
+    }
+    
+    return this.getTasks(filter, page, limit);
+  }
 }
