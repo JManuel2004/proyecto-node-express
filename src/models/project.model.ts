@@ -1,8 +1,6 @@
 import { Schema, Document, model } from "mongoose";
 import { IProject } from "../types";
 
-export type ProjectStatus = 'active' | 'archived' | 'completed';
-
 export interface ProjectDocument extends Omit<IProject, '_id'>, Document {}
 
 const projectSchema = new Schema<ProjectDocument>({

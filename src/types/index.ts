@@ -1,5 +1,8 @@
 import { Request } from 'express';
-import { TaskStatus, TaskPriority, ProjectStatus } from '../models';
+
+export type ProjectStatus = 'active' | 'archived' | 'completed';
+export type TaskStatus = 'todo' | 'in_progress' | 'done';
+export type TaskPriority = 'low' | 'medium' | 'high';
 
 export interface IUser {
   _id?: string;
@@ -18,7 +21,7 @@ export interface IProject {
   name: string;
   description?: string;
   owner: IUser['_id']; 
-  status?: 'active' | 'archived' | 'completed';
+  status?: ProjectStatus;
   startDate: Date;
   endDate?: Date;
   createdAt?: Date;

@@ -1,22 +1,8 @@
 import {Schema , Document , model} from "mongoose";
 import { IProject , IUser } from "../types";
+import { ITask } from "../types";
 
-export type TaskStatus = 'todo' | 'in_progress' | 'done';
-export type TaskPriority = 'low' | 'medium' | 'high';
-
-export interface TaskInput {
-    title: string;
-    description?: string;
-    status: TaskStatus;
-    priority: TaskPriority;
-    deadline: Date;
-    project: IProject['_id'];
-    assignedTo?: IUser['_id'];
-    createdAt?: Date;
-    updatedAt?: Date;
-}
-
-export interface TaskDocument extends TaskInput, Document {}
+export interface TaskDocument extends Omit<ITask, "_id">, Document {}
 
 const taskSchema = new Schema<TaskDocument>({
   title: {
