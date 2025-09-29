@@ -1,12 +1,8 @@
 import mongoose from 'mongoose';
-import dotenv from 'dotenv';
-
-dotenv.config();
+import { config } from './index';
 
 const connectDB = async (): Promise<void> => {
   try {
-    const mongoURI = process.env.MONGODB_URI || 'mongodb://127.0.0.1:27017/proyecto_backend';
-    
     // Configuraciones para evitar warnings y mejorar la conexión
     const options = {
       maxPoolSize: 10,
@@ -15,7 +11,7 @@ const connectDB = async (): Promise<void> => {
       bufferCommands: false
     };
     
-    const conn = await mongoose.connect(mongoURI, options);
+    const conn = await mongoose.connect(config.mongoUri, options);
     
     console.log(`[DB] MongoDB conectado: ${conn.connection.host}`);
   } catch (error) {

@@ -5,6 +5,7 @@ import { IUser } from '../types';
 interface IUserDocument extends Document {
   email: string;
   password: string;
+  username?: string;
   firstName: string;
   lastName: string;
   role: 'superadmin' | 'usuario';
@@ -30,6 +31,13 @@ const userSchema = new Schema<IUserDocument>({
     type: String,
     required: [true, 'La contraseña es requerida'],
     minlength: [6, 'La contraseña debe tener al menos 6 caracteres']
+  },
+  username: {
+    type: String,
+    unique: true,
+    sparse: true, // Permite múltiples documentos con valor null/undefined
+    trim: true,
+    maxlength: [30, 'El nombre de usuario no puede exceder 30 caracteres']
   },
   firstName: {
     type: String,

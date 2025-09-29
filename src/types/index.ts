@@ -8,6 +8,7 @@ export interface IUser {
   _id?: string;
   email: string;
   password: string;
+  username?: string;
   firstName: string;
   lastName: string;
   role: 'superadmin' | 'usuario';
@@ -46,6 +47,39 @@ export interface JWTPayload {
   userId: string;
   email: string;
   role: 'superadmin' | 'usuario';
+}
+
+// Nuevo enum para roles de usuario
+export enum UserRole {
+  SUPERADMIN = 'superadmin',
+  USER = 'usuario'
+}
+
+// Nuevos tipos para el servicio de autenticación
+export interface UserLoginInput {
+  email: string;
+  password: string;
+}
+
+export interface JwtCustomPayload {
+  userId: string;
+  email: string;
+  roles: 'superadmin' | 'usuario';
+}
+
+export interface LoginResponse {
+  id: string;
+  username: string;
+  email: string;
+  roles: 'superadmin' | 'usuario';
+  token: string;
+}
+
+export interface RegisterResponse {
+  id: string;
+  username: string;
+  email: string;
+  roles: 'superadmin' | 'usuario';
 }
 
 export interface AuthRequest extends Request {

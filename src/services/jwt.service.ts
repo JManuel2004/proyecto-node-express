@@ -1,41 +1,131 @@
+import bcrypt from 'bcryptjs';
 import jwt from 'jsonwebtoken';
-import { JWTPayload } from '../types';
+import { config } from '../config';
+import { User } from '../models';
+import {
+  UserLoginInput,
+  LoginResponse,
+  RegisterRequest,
+  RegisterResponse,
+  JwtCustomPayload,
+  UserRole,
+} from '../types';
+import { UnauthorizedError, ConflictError } from '../middleware/error';
 
-export class JWTService {
-  private static readonly secret: string = process.env.JWT_SECRET || 'fallback_secret_change_in_production';
-  private static readonly expiresIn: string = process.env.JWT_EXPIRES_IN || '7d';
-  private static readonly refreshExpiresIn: string = process.env.JWT_REFRESH_EXPIRES_IN || '30d';
+class AuthService {
+  private readonly saltRounds = 12;
+  private readonly jwtExpiresIn = '7d';
 
-  static generateToken(payload: JWTPayload): string {
-    return jwt.sign(payload, this.secret, { 
-      expiresIn: this.expiresIn 
+  async login(loginData: UserLoginInput): Promise<LoginResponse> {
+    const { email, password } = loginData;
+
+    const user = await User.findOne({ email, isActive: true }).select('+password').lean();
+    if (!user) {
+      throw new UnauthorizedError('Credenciales inválidas');
+    }
+
+    // Verificar contraseña
+    const isPasswordValid = await bcrypt.compare(password, user.password);
+    if (!isPasswordValid) {
+      throw new UnauthorizedError('Credenciales inválidas');
+    }
+
+    // Generar token JWT
+    const payload: JwtCustomPayload = {
+      userId: user._id ? String(user._id) : '',
+      email: user.email,
+      roles: user.role,
+    };
+
+    const token = jwt.sign(payload, config.jwtSecret, {
+      expiresIn: this.jwtExpiresIn,
     });
+
+    return {
+      id: user._id ? String(user._id) : '',
+      username: user.username || `${user.firstName} ${user.lastName}`,
+      email: user.email,
+      roles: user.role,
+      token,
+    };
   }
 
-  static generateRefreshToken(payload: JWTPayload): string {
-    return jwt.sign(payload, this.secret, { 
-      expiresIn: this.refreshExpiresIn 
+  async register(registerData: RegisterRequest): Promise<RegisterResponse> {
+    const { firstName, lastName, email, password } = registerData;
+
+    // Verificar si el email ya existe
+    const existingUser = await User.findOne({ email, isActive: true }).lean();
+    if (existingUser) {
+      throw new ConflictError('El email ya está registrado');
+    }
+
+    // Hashear contraseña
+    const hashedPassword = await bcrypt.hash(password, this.saltRounds);
+
+    // Crear usuario con rol de usuario regular
+    const user = new User({
+      firstName,
+      lastName,
+      email,
+      password: hashedPassword,
+      role: UserRole.USER, // Solo usuarios regulares pueden registrarse
+      isActive: true,
     });
+    const savedUser = await user.save();
+    const newUser = savedUser.toObject();
+
+    return {
+      id: newUser._id ? String(newUser._id) : '',
+      username: newUser.username || `${newUser.firstName} ${newUser.lastName}`,
+      email: newUser.email,
+      roles: newUser.role,
+    };
   }
 
-  static verifyToken(token: string): JWTPayload {
+  async verifyToken(token: string): Promise<JwtCustomPayload> {
     try {
-      return jwt.verify(token, this.secret) as JWTPayload;
+      const decoded = jwt.verify(token, config.jwtSecret) as JwtCustomPayload;
+
+      // Verificar que el usuario aún existe
+      const user = await User.findById(decoded.userId).lean();
+      if (!user) {
+        throw new UnauthorizedError('Usuario no encontrado');
+      }
+
+      return decoded;
     } catch (error) {
       if (error instanceof jwt.JsonWebTokenError) {
-        throw new Error('Token inválido');
-      } else if (error instanceof jwt.TokenExpiredError) {
-        throw new Error('Token expirado');
+        throw new UnauthorizedError('Token inválido');
       }
-      throw new Error('Error al verificar token');
+      if (error instanceof jwt.TokenExpiredError) {
+        throw new UnauthorizedError('Token expirado');
+      }
+      throw error;
     }
   }
 
-  static decodeToken(token: string): JWTPayload | null {
-    try {
-      return jwt.decode(token) as JWTPayload;
-    } catch (error) {
-      return null;
-    }
+  // Método para generar token (compatibilidad con el sistema existente)
+  generateToken(payload: { userId: string; email: string; role: string }): string {
+    const jwtPayload: JwtCustomPayload = {
+      userId: payload.userId,
+      email: payload.email,
+      roles: payload.role as 'superadmin' | 'usuario',
+    };
+
+    return jwt.sign(jwtPayload, config.jwtSecret, {
+      expiresIn: this.jwtExpiresIn,
+    });
   }
 }
+
+export const authService = new AuthService();
+
+// Exportar también como JWTService para mantener compatibilidad
+export const JWTService = {
+  generateToken: (payload: { userId: string; email: string; role: string }) => {
+    return authService.generateToken(payload);
+  },
+  verifyToken: (token: string) => {
+    return authService.verifyToken(token);
+  }
+};

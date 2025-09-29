@@ -64,16 +64,25 @@ export class ProjectService {
   static async getProjectById(id: string): Promise<IProject> {
     const project = await Project.findById(id)
       .populate('owner', 'firstName lastName email');
-
+    
     if (!project) {
       throw new NotFoundError('Proyecto no encontrado');
     }
 
-  const plainProject = project.toObject();
-  return { ...plainProject, _id: (plainProject._id as any).toString() };
+    const plainProject = project.toObject();
+    return { ...plainProject, _id: (plainProject._id as any).toString() };
   }
 
   static async updateProject(id: string, updates: UpdateProjectRequest): Promise<IProject> {
+    // Validación de fechas si se proporcionan
+    if (updates.startDate && updates.endDate) {
+      const start = new Date(updates.startDate);
+      const end = new Date(updates.endDate);
+      if (start > end) {
+        throw new ValidationError('La fecha de inicio no puede ser posterior a la fecha de fin');
+      }
+    }
+
     if (updates.startDate) updates.startDate = new Date(updates.startDate);
     if (updates.endDate) updates.endDate = new Date(updates.endDate);
 
@@ -87,8 +96,8 @@ export class ProjectService {
       throw new NotFoundError('Proyecto no encontrado');
     }
 
-  const plainProject = project.toObject();
-  return { ...plainProject, _id: (plainProject._id as any).toString() };
+    const plainProject = project.toObject();
+    return { ...plainProject, _id: (plainProject._id as any).toString() };
   }
 
   static async deleteProject(id: string): Promise<void> {

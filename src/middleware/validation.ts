@@ -75,3 +75,6 @@ export const handleValidationErrors = (
   
   next();
 };
+
+// Alias para compatibilidad
+export const validateRequest = handleValidationErrors;

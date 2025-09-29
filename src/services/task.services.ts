@@ -66,16 +66,20 @@ export class TaskService {
   }
 
   static async getTaskById(id: string): Promise<ITask> {
-    const task = await Task.findById(id)
-      .populate('project', 'name description owner')
-      .populate('assignedTo', 'firstName lastName email');
-
+    const task = await Task.findById(id);
+    
     if (!task) {
       throw new NotFoundError('Tarea no encontrada');
     }
 
-    const plainTask = task.toObject();
-  return { ...plainTask, _id: (plainTask._id as any).toString() };
+    // Ahora sí puedes hacer populate porque sabes que task no es null
+    const populatedTask = await task.populate([
+      { path: 'project', select: 'name description owner' },
+      { path: 'assignedTo', select: 'firstName lastName email' }
+    ]);
+
+    const plainTask = populatedTask.toObject();
+    return { ...plainTask, _id: (plainTask._id as any).toString() };
   }
 
   static async updateTask(id: string, updates: UpdateTaskRequest): Promise<ITask> {
@@ -85,16 +89,20 @@ export class TaskService {
       id,
       updates,
       { new: true, runValidators: true }
-    )
-      .populate('project', 'name description')
-      .populate('assignedTo', 'firstName lastName email');
+    );
 
     if (!task) {
       throw new NotFoundError('Tarea no encontrada');
     }
 
-    const plainTask = task.toObject();
-  return { ...plainTask, _id: (plainTask._id as any).toString() };
+    // Hacer populate después de verificar que task no es null
+    const populatedTask = await task.populate([
+      { path: 'project', select: 'name description' },
+      { path: 'assignedTo', select: 'firstName lastName email' }
+    ]);
+
+    const plainTask = populatedTask.toObject();
+    return { ...plainTask, _id: (plainTask._id as any).toString() };
   }
 
   static async deleteTask(id: string): Promise<void> {

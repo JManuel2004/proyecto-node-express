@@ -1,6 +1,6 @@
 import { Request, Response, NextFunction } from 'express';
-import { JWTService } from '../services';
-import type { AuthRequest, JWTPayload } from '../types';
+import { authService } from '../services/jwt.service';
+import type { AuthRequest, JwtCustomPayload } from '../types';
 
 export const authenticate = async (req: AuthRequest, res: Response, next: NextFunction): Promise<void> => {
   try {
@@ -16,8 +16,12 @@ export const authenticate = async (req: AuthRequest, res: Response, next: NextFu
 
     const token = authHeader.substring(7); // Remove "Bearer "
     
-    const decoded = JWTService.verifyToken(token);
-    req.user = decoded;
+    const decoded = await authService.verifyToken(token);
+    req.user = {
+      userId: decoded.userId,
+      email: decoded.email,
+      role: decoded.roles
+    };
     
     next();
   } catch (error) {
