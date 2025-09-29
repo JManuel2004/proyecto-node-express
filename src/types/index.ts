@@ -12,6 +12,19 @@ export interface IUser {
   updatedAt?: Date;
 }
 
+export interface IProject {
+  _id?: string;
+  name: string;
+  description?: string;
+  owner: IUser['_id']; 
+  status?: 'active' | 'archived' | 'completed';
+  startDate: Date;
+  endDate?: Date;
+  createdAt?: Date;
+  updatedAt?: Date;
+}
+
+
 export interface JWTPayload {
   userId: string;
   email: string;

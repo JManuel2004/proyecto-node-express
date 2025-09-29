@@ -17,12 +17,12 @@ export interface ProjectDocument extends ProjectInput, Document {}
 const projectSchema = new Schema<ProjectDocument>({
     name: { 
         type: String, 
-        required: true,
+        required: [true, 'El nombre del proyecto es obligatorio'],
         trim: true,
         maxlength: 100
     },
     description: { 
-        type: String,
+        type: String, 
         trim: true,
         maxlength: 500
     },
@@ -38,7 +38,7 @@ const projectSchema = new Schema<ProjectDocument>({
     },
     startDate: { 
         type: Date, 
-        required: true 
+        required: [true , 'La fecha de inicio es obligatoria']
     },
     endDate: { 
         type: Date 
