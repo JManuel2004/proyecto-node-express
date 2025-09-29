@@ -1,4 +1,5 @@
 import { Request } from 'express';
+import { TaskStatus, TaskPriority, ProjectStatus } from '../models';
 
 export interface IUser {
   _id?: string;
@@ -20,6 +21,19 @@ export interface IProject {
   status?: 'active' | 'archived' | 'completed';
   startDate: Date;
   endDate?: Date;
+  createdAt?: Date;
+  updatedAt?: Date;
+}
+
+export interface ITask {
+  _id?: string;  
+  title: string;
+  description?: string;
+  status: TaskStatus;
+  priority: TaskPriority;
+  deadline: Date;
+  project: IProject['_id']; 
+  assignedTo?: IUser['_id']; 
   createdAt?: Date;
   updatedAt?: Date;
 }
@@ -53,4 +67,37 @@ export interface UpdateUserRequest {
   email?: string;
   role?: 'superadmin' | 'usuario';
   isActive?: boolean;
+}
+
+export interface CreateProjectRequest {
+  name: string;
+  description?: string;
+  startDate: Date;
+  endDate?: Date;
+}
+
+export interface UpdateProjectRequest {
+  name?: string;
+  description?: string;
+  status?: ProjectStatus;
+  startDate?: Date;
+  endDate?: Date;
+}
+
+export interface CreateTaskRequest {
+  title: string;
+  description?: string;
+  priority: TaskPriority;
+  deadline: Date;
+  project: string;
+  assignedTo?: string;
+}
+
+export interface UpdateTaskRequest {
+  title?: string;
+  description?: string;
+  status?: TaskStatus;
+  priority?: TaskPriority;
+  deadline?: Date;
+  assignedTo?: string;
 }

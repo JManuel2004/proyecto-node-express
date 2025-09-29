@@ -1,18 +1,9 @@
 import { Schema, Document, model } from "mongoose";
-import { IUser } from "../types";
+import { IProject } from "../types";
 
 export type ProjectStatus = 'active' | 'archived' | 'completed';
 
-export interface ProjectInput {
-    name: string;
-    description?: string;
-    owner: IUser['_id'];
-    status?: ProjectStatus;
-    startDate: Date;
-    endDate?: Date;
-}
-
-export interface ProjectDocument extends ProjectInput, Document {}
+export interface ProjectDocument extends Omit<IProject, '_id'>, Document {}
 
 const projectSchema = new Schema<ProjectDocument>({
     name: { 
