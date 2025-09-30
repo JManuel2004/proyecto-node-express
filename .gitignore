@@ -11,7 +11,7 @@ build/
 *.tgz
 
 # Code coverage
-coverage/
+
 *.lcov
 .nyc_output
 
