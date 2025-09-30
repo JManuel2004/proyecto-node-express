@@ -31,14 +31,10 @@ class AuthService {
     }
 
     // Generar token JWT
-    const payload: JwtCustomPayload = {
+    const token = this.generateToken({
       userId: user._id ? String(user._id) : '',
       email: user.email,
-      roles: user.role,
-    };
-
-    const token = jwt.sign(payload, config.jwtSecret, {
-      expiresIn: this.jwtExpiresIn,
+      role: user.role,
     });
 
     return {
