@@ -55,15 +55,12 @@ class AuthService {
       throw new ConflictError('El email ya está registrado');
     }
 
-    // Hashear contraseña
-    const hashedPassword = await bcrypt.hash(password, this.saltRounds);
-
-    // Crear usuario con rol de usuario regular
+    // Crear usuario con la contraseña en texto plano (el modelo la hasheará)
     const user = new User({
       firstName,
       lastName,
       email,
-      password: hashedPassword,
+      password: password, // El pre('save') del modelo User la hasheará
       role: UserRole.USER, // Solo usuarios regulares pueden registrarse
       isActive: true,
     });
