@@ -71,27 +71,15 @@ npm install
 
 ---
 
+
 ## 2. Configurar Variables de Entorno
-Crear archivo `.env` en la raíz del proyecto:
 
-```env
-# Servidor
-NODE_ENV=development
-PORT=3000
+1. Copiar el archivo `.env.example` a `.env`:
+   ```bash
+   cp .env.example .env
+   ```
 
-# Base de Datos
-MONGODB_URI=mongodb://localhost:27017/proyecto_backend
-
-# Autenticación JWT
-JWT_SECRET=tu_clave_secreta_jwt_muy_segura
-JWT_EXPIRES_IN=7d
-JWT_REFRESH_EXPIRES_IN=30d
-
-# Seguridad
-BCRYPT_SALT_ROUNDS=12
-RATE_LIMIT_WINDOW_MS=900000
-RATE_LIMIT_MAX_REQUESTS=100
-```
+2. Editar el archivo `.env` y completar los valores con tus credenciales.
 
 ## 3. Configurar Base de Datos
 
