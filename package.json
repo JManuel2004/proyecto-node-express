@@ -6,8 +6,8 @@
   "scripts": {
     "dev": "bun --watch index.ts",
     "start": "bun index.ts",
-    "build": "bun build index.ts --outdir ./dist --target bun",
-    "preview": "bun dist/index.js",
+    "build": "chmod +x render-build.sh && ./render-build.sh",
+    "render-start": "chmod +x render-start.sh && ./render-start.sh",
     "verify-deploy": "bun scripts/verify-deploy.ts",
     "test": "jest",
     "test:watch": "jest --watch",
