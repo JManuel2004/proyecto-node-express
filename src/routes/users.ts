@@ -11,18 +11,6 @@ import {
 
 const router = Router();
 
-// Rutas públicas
-router.post('/register', 
-  validateRegister, 
-  handleValidationErrors, 
-  UserController.register
-);
-
-router.post('/login', 
-  validateLogin, 
-  handleValidationErrors, 
-  UserController.login
-);
 
 // Rutas protegidas - requieren autenticación
 router.use(authenticate);

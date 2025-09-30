@@ -43,9 +43,9 @@ app.get('/', (req, res) => {
     version: '1.0.0',
     endpoints: {
       auth: {
-        login: '/api/users/login',
-        register: '/api/users/register',
-        profile: '/api/users/profile'
+        login: '/api/auth/login',
+        register: '/api/auth/register',
+        profile: '/api/auth/profile'
       },
       users: '/api/users',
       projects: {

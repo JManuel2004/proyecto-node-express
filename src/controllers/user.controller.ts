@@ -5,37 +5,6 @@ import { UnauthorizedError, BadRequestError } from '../middleware/error';
 
 export class UserController {
   
-  static async register(req: Request, res: Response, next: NextFunction): Promise<void> {
-    try {
-      const userData: RegisterRequest = req.body;
-      const result = await UserService.register(userData);
-
-      res.status(201).json({
-        success: true,
-        message: 'Usuario registrado exitosamente',
-        data: result
-      });
-    } catch (error) {
-      next(error);
-    }
-  }
-
-  
-  static async login(req: Request, res: Response, next: NextFunction): Promise<void> {
-    try {
-      const loginData: LoginRequest = req.body;
-      const result = await UserService.login(loginData);
-
-      res.json({
-        success: true,
-        message: 'Login exitoso',
-        data: result
-      });
-    } catch (error) {
-      next(error);
-    }
-  }
-
   
   static async getProfile(req: AuthRequest, res: Response, next: NextFunction): Promise<void> {
     try {
