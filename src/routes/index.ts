@@ -6,6 +6,16 @@ import taskRoutes from './task.routes';
 
 const router = Router();
 
+// Health check endpoint para verificar que el servidor funciona
+router.get('/health', (req, res) => {
+  res.status(200).json({
+    success: true,
+    message: 'API funcionando correctamente',
+    timestamp: new Date().toISOString(),
+    environment: process.env.NODE_ENV || 'development'
+  });
+});
+
 router.use('/auth', authRoutes);
 router.use('/users', userRoutes);
 router.use('/projects', projectRoutes);
