@@ -71,29 +71,18 @@ npm install
 
 ---
 
-## 3. Configurar Variables de Entorno
-Crear archivo `.env` en la raíz del proyecto:
 
-```env
-# Servidor
-NODE_ENV=development
-PORT=3000
+## 2. Configurar Variables de Entorno
 
-# Base de Datos
-MONGODB_URI=mongodb://localhost:27017/proyecto_backend
+1. Copiar el archivo `.env.example` a `.env`:
+   ```bash
+   cp .env.example .env
+   ```
 
-# Autenticación JWT
-JWT_SECRET=tu_clave_secreta_jwt_muy_segura
-JWT_EXPIRES_IN=7d
-JWT_REFRESH_EXPIRES_IN=30d
+2. Editar el archivo `.env` y completar los valores con tus credenciales.
 
-# Seguridad
-BCRYPT_SALT_ROUNDS=12
-RATE_LIMIT_WINDOW_MS=900000
-RATE_LIMIT_MAX_REQUESTS=100
-```
+## 3. Configurar Base de Datos
 
-## 4. Configurar Base de Datos
 
 La base de datos se **dockerizó** para facilitar su despliegue y gestión.
 
@@ -110,7 +99,8 @@ docker ps
 mongod
 ```
 
-## 5. Ejecutar la Aplicación
+## 4. Ejecutar la Aplicación
+
 ```bash
 # Desarrollo con Bun
 bun run dev
@@ -228,5 +218,4 @@ Al iniciar la aplicación se crea automáticamente un usuario superadmin:
    - **Solución:** Uso de `jest.Mocked` y tipado estricto en tests.
 
 ---
-
 
